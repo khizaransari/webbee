@@ -21,7 +21,7 @@ class BookingController extends Controller
         $services = Service::active()
                     ->with(['timeSlots', 'offDays', 'breaks', 'bookings'])->get();
         return response()->json([
-            'services' => $services
+            'data' => $services
         ], 200);
 
     }
