@@ -13,7 +13,6 @@ class CreateTimeSlotsTable extends Migration
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');
-            $table->integer('consecutive_appointment_book')->nullable();
             $table->boolean('available')->default(true);
             $table->unsignedBigInteger('service_id');
             $table->timestamps();

@@ -18,7 +18,9 @@ class CreateOffDaysTable extends Migration
             $table->string('title');
             $table->unsignedBigInteger('service_id');
             $table->enum('day_of_week', ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']);
-            $table->boolean('is_half_day');
+            $table->boolean('is_half_day')->default(0);
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
             $table->timestamps();
             // $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
         });

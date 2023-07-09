@@ -17,8 +17,9 @@ class CreateServicesTable extends Migration
             $table->id();
             $table->string('name');
             $table->integer('number_of_clients')->default(1);
-            $table->dateTime('buffer_time');
-            $table->dateTime('duration');
+            $table->unsignedBigInteger('buffer_time');
+            $table->unsignedBigInteger('slot_duration');
+            $table->integer('consecutive_appointment_book')->nullable();
             $table->boolean('available')->default(true);
             // Add any other relevant fields for services
             $table->timestamps();

@@ -20,8 +20,6 @@ class CreateBookingParticipantsTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->timestamps();
-
-            // $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
         });
     }
 

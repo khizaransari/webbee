@@ -17,7 +17,6 @@ class CreateBookingsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('time_slot_id');
             $table->timestamps();
-            $table->foreign('time_slot_id')->references('id')->on('time_slots')->onDelete('cascade');
         });
     }
 

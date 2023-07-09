@@ -18,10 +18,7 @@ class CreateBreaksTable extends Migration
             $table->unsignedBigInteger('service_id');
             $table->time('start_time');
             $table->time('end_time');
-            // Add any other relevant fields for breaks
             $table->timestamps();
-
-            // $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
         });
     }
 

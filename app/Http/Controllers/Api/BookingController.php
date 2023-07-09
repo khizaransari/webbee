@@ -19,7 +19,8 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         $data = $request->date;
-        $services = Service::active()->with(['timeSlots', 'offDays', 'breaks', 'bookings'])->get();
+        $services = Service::active()
+                    ->with(['timeSlots', 'offDays', 'breaks', 'bookings'])->get();
         return response()->json([
             'services' => $services
         ], 200);
@@ -33,16 +34,12 @@ class BookingController extends Controller
             'service_id' => 'required|exists:services,id',
             'time_slot_id' => 'required|exists:time_slots,id',
             'people' => 'required',
-            // 'people.*.email' => 'required|email',
-            // 'people.*.first_name' => 'required',
-            // 'people.*.last_name' => 'required',
         ]);
 
 
         $peopleFields = ['email', 'first_name', 'last_name'];
         $people = isset($request->people) ? json_decode($request->people, true) : [];
         if(count($people) > 0) {
-            $is_variant = true;
             foreach ($people as $item) {
                 foreach ($peopleFields as $key) {
                     if (!isset($item[$key])) {
@@ -84,13 +81,6 @@ class BookingController extends Controller
             }
         }
 
-        // Check if the requested time slot is on an off day
-        $carbonDate = Carbon::parse($timeSlot->date);
-        $dayName = $carbonDate->format('l');
-        $offDay = OffDay::where('day_of_week', $dayName)->first();
-        if ($offDay) {
-            return response()->json(['message' => 'Requested time slot is on an off day'], 400);
-        }
 
         // Check if the requested time slot exceeds the buffer time
         $bufferTime = $service->buffer_time;
@@ -98,6 +88,22 @@ class BookingController extends Controller
         $endTime = Carbon::parse($timeSlot->date . ' ' . $timeSlot->end_time);
         if ($startTime->diffInMinutes() < $bufferTime || $endTime->diffInMinutes() < $bufferTime) {
             return response()->json(['message' => 'Requested time slot is not valid'], 400);
+        }
+
+        // Check if the requested time slot is on an off day
+        $carbonDate = Carbon::parse($timeSlot->date);
+        $dayName = $carbonDate->format('l');
+        $offDay = OffDay::where([
+                ['day_of_week', '=', $dayName],
+                ['service_id', '=', $request->service_id],
+            ])
+            ->first();
+
+        if (@$offDay->is_half_day) {
+            if ($startTime->diffInMinutes() <= $offDay->start_time || $endTime->diffInMinutes() >= $offDay->end_time) {
+                return response()->json(['message' => 'Requested time slot is not valid'], 400);
+            }
+            // check the slots not to be in opening time
         }
 
         // Create the booking
