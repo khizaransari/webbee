@@ -18,7 +18,6 @@ class BookingController extends Controller
 {
     public function index(Request $request)
     {
-        $data = $request->date;
         $services = Service::active()
                     ->with(['timeSlots', 'offDays', 'breaks', 'bookings'])->get();
         return response()->json([
